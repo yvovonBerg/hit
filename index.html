@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>HIT2024</title>
+<style>
+  .calendar { display: grid; grid-template-columns: repeat(7, 1fr); grid-gap: 10px; }
+  .calendar div { padding: 40px; background: #808080; text-align: center; cursor: pointer; }
+  .selected { background-color: darkslategrey !important; color: white; }
+</style>
+</head>
+<body>
+
+<h2>Kies de data in de juiste volgorde:</h2>
+<div id="calendar" class="calendar"></div>
+
+<script>
+  const correctOrder = ['24/05', '25/05', '21/05', '22/05', '12/04', '13/04', '03/04', '18/05', '07/06', '30/05', '10/05', '11/05', '10/04'];
+  let userSelections = [];
+
+  function generateCalendar() {
+    const months = [4, 5, 6]; // April, May, June
+    const daysInMonth = [30, 31, 30]; // Assuming 2023 for simplicity
+
+    months.forEach((month, index) => {
+      for (let day = 1; day <= daysInMonth[index]; day++) {
+        const dateDiv = document.createElement('div');
+        dateDiv.textContent = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}`;
+        dateDiv.addEventListener('click', () => selectDate(dateDiv));
+        document.getElementById('calendar').appendChild(dateDiv);
+      }
+    });
+  }
+
+  function selectDate(date) {
+    if (!userSelections.includes(date)) {
+      userSelections.push(date);
+      checkSelection();
+      date.classList.add('selected');
+    }
+  }
+
+  function checkSelection() {
+    if (userSelections.length === correctOrder.length) {
+      if (userSelections.every((val, index) => val === correctOrder[index])) {
+        document.getElementById('calendar').textContent = 'A56B8DX9';
+      } else {
+        document.getElementById('calendar').textContent = generateRandomCode();
+      }
+      userSelections = []; // Reset selections
+      resetCalendar();
+    }
+  }
+
+  function generateRandomCode() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+
+  function resetCalendar() {
+    document.querySelectorAll('.calendar div').forEach(div => {
+      div.classList.remove('selected');
+    });
+  }
+
+  generateCalendar();
+</script>
+</body>
+</html>
