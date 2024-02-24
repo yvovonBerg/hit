@@ -1,73 +1,235 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>HIT2024</title>
-<style>
-  .calendar { display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px; }
-  .calendar div { padding: 70px; font-weight: bold; background: #808080; text-align: center; cursor: pointer; color: black; }
-  .selected { background-color: darkslategrey !important; color: white; }
-</style>
+    <title>HIT</title>
+    <meta charset="UTF-8" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #calendar {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        #calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        #days {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        #calendar-body {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background-color: #333;
+            transition: opacity 0.5s ease;
+            opacity: 1;
+        }
+
+        #calendar-body.fade-out {
+            opacity: 0;
+        }
+
+        #calendar-body div {
+            padding: 40px;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .change-month {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <div id="calendar">
+        <div id="calendar-header">
+            <span id="month-prev" class="change-month">&lt;</span>
+            <h1 id="month"></h1>
+            <span id="month-next" class="change-month">&gt;</span>
+        </div>
+        <div id="days"></div>
+        <div id="calendar-body"></div>
+    </div>
 
-<h2>Kies de data in de juiste volgorde:</h2>
-<div id="calendar" class="calendar"></div>
+    <script>
+        let date = new Date();
+        let selectedDates = [];
+        
+        function renderCalendar() {
+            date.setDate(1);
+        
+            const monthDays = document.getElementById('calendar-body');
+            const month = document.getElementById('month');
+            const daysElement = document.getElementById('days');
 
-<script>
-  const correctOrder = ['24/05', '25/05', '21/05', '22/05', '12/04', '13/04', '03/04', '18/05', '07/06', '30/05', '10/05', '11/05', '10/04'];
-  let userSelections = [];
 
-  function generateCalendar() {
-    const months = [4, 5, 6]; // April, May, June
-    const daysInMonth = [30, 31, 30]; // Assuming 2023 for simplicity
+            function generateRandomCode() {
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let result = '';
+                for (let i = 0; i < 8; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+                }
+                return result;
+            }
+        
+            const lastDay = new Date(
+                date.getFullYear(),
+                date.getMonth() + 1,
+                0
+            ).getDate();
+        
+            const prevLastDay = new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                0
+            ).getDate();
+        
+            const firstDayIndex = date.getDay();
+        
+            const lastDayIndex = new Date(
+                date.getFullYear(),
+                date.getMonth() + 1,
+                0
+            ).getDay();
 
-    months.forEach((month, index) => {
-      for (let day = 1; day <= daysInMonth[index]; day++) {
-        const dateDiv = document.createElement('div');
-        dateDiv.textContent = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}`;
-        dateDiv.addEventListener('click', () => selectDate(dateDiv));
-        document.getElementById('calendar').appendChild(dateDiv);
-      }
-    });
-  }
+            function arraysEqual(a, b) {
+                if (a.length !== b.length) return false;
+                for (let i = 0; i < a.length; i++) {
+                    if (a[i] !== b[i]) return false;
+                }
+                return true;
+            }
+                
+            const nextDays = 7 - lastDayIndex - 1;
+        
+            const months = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ];
+        
+            const days = [
+                'S',
+                'M',
+                'T',
+                'W',
+                'T',
+                'F',
+                'S'
+            ];
 
-  function selectDate(date) {
-    if (!userSelections.includes(date)) {
-      userSelections.push(date);
-      checkSelection();
-      date.classList.add('selected');
-    }
-  }
+            const check = [
+                '2024-5-24',
+                '2024-5-25',
+                '2024-5-21',
+                '2024-5-22',
+                '2024-4-12',
+                '2024-4-13',
+                '2024-4-3',
+                '2024-5-18',
+                '2024-6-7',
+                '2024-5-30',
+                '2024-5-10',
+                '2024-5-11',
+                '2024-4-10',
+            ];
+        
+            month.innerText = `${months[date.getMonth()]} ${date.getFullYear()}`;
+            daysElement.innerHTML = days.map(day => `<div>${day}</div>`).join('');
+        
+            let dates = '';
+        
+            for (let x = firstDayIndex; x > 0; x--) {
+                let prevDate = new Date(date.getFullYear(), date.getMonth(), -x + 1);
+                let fullDate = `${prevDate.getFullYear()}-${prevDate.getMonth() + 1}-${prevDate.getDate()}`;
+                dates += `<div class='prev-date' data-date='${fullDate}'>${prevLastDay - x + 1}</div>`;
+            }
+        
+            for (let i = 1; i <= lastDay; i++) {
+                let fullDate = `${date.getFullYear()}-${date.getMonth() + 1}-${i}`;
+                if (
+                    i === new Date().getDate() &&
+                    date.getMonth() === new Date().getMonth() &&
+                    date.getFullYear() === new Date().getFullYear()
+                ) {
+                    dates += `<div class='today' data-date='${fullDate}'>${i}</div>`;
+                } else {
+                    dates += `<div data-date='${fullDate}'>${i}</div>`;
+                }
+            }
+        
+            for (let j = 1; j <= nextDays; j++) {
+                let nextDate = new Date(date.getFullYear(), date.getMonth() + 1, j);
+                let fullDate = `${nextDate.getFullYear()}-${nextDate.getMonth() + 1}-${nextDate.getDate()}`;
+                dates += `<div class='next-date' data-date='${fullDate}'>${j}</div>`;
+            }
+        
+            monthDays.innerHTML = dates;
+        
+            document.querySelectorAll('#calendar-body > div').forEach(day => {
+                day.addEventListener('click', function() {
+                    let selectedDate = this.getAttribute('data-date');
+                    if (selectedDates.includes(selectedDate)) {
+                        selectedDates = selectedDates.filter(date => date !== selectedDate);
+                        this.style.backgroundColor = ''; // Deselect
+                    } else {
+                        selectedDates.push(selectedDate);
+                        this.style.backgroundColor = 'green'; // Select
+                        console.log(selectedDates);
+                    }
 
-  function checkSelection() {
-    if (userSelections.length === correctOrder.length) {
-      if (userSelections.every((val, index) => val === correctOrder[index])) {
-        document.getElementById('calendar').textContent = 'A56B8DX9';
-      } else {
-        document.getElementById('calendar').textContent = generateRandomCode();
-      }
-      userSelections = []; // Reset selections
-      resetCalendar();
-    }
-  }
-
-  function generateRandomCode() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let result = '';
-    for (let i = 0; i < 8; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-  }
-
-  function resetCalendar() {
-    document.querySelectorAll('.calendar div').forEach(div => {
-      div.classList.remove('selected');
-    });
-  }
-
-  generateCalendar();
-</script>
+                    console.log(selectedDates, check);
+                    if (arraysEqual(selectedDates, check)) {
+                        document.getElementById('calendar').textContent = 'A56B8DX9';
+                    } else if (selectedDates.length == check.length){
+                        document.getElementById('calendar').textContent = generateRandomCode();
+                    }
+                });
+            });
+        }
+        
+        document.getElementById('month-prev').addEventListener('click', () => {
+            document.getElementById('calendar-body').classList.add('fade-out');
+            setTimeout(() => {
+                date.setMonth(date.getMonth() - 1);
+                renderCalendar();
+                document.getElementById('calendar-body').classList.remove('fade-out');
+            }, 500);
+        });
+        
+        document.getElementById('month-next').addEventListener('click', () => {
+            document.getElementById('calendar-body').classList.add('fade-out');
+            setTimeout(() => {
+                date.setMonth(date.getMonth() + 1);
+                renderCalendar();
+                document.getElementById('calendar-body').classList.remove('fade-out');
+            }, 500);
+        });
+        
+        renderCalendar();
+    </script>
 </body>
 </html>
