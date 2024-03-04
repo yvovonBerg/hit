@@ -61,6 +61,10 @@
     </style>
 </head>
 <body>
+    <video controls>
+        <source src="audio.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video><br />
     <div id="calendar">
         <div id="calendar-header">
             <span id="month-prev" class="change-month">&lt;</span>
@@ -69,9 +73,8 @@
         </div>
         <div id="calendar-body"></div>
     </div>
-
     <script>
- let date = new Date();
+        let date = new Date();
         let selectedDates = [];
 
         function formatDate(date) {
