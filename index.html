@@ -8,12 +8,14 @@
             font-family: Arial, sans-serif;
         }
 
-        video {
-            width: 100%; /* Increase video width */
-            max-width: 800px; /* Set a max-width for larger screens */
-            height: auto;
-            display: block; /* Center the video */
-            margin: 0 auto; /* Center the video */
+        audio {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .page-title {
+            text-align: center;
+            margin: 20px 0;
         }
 
         #calendar {
@@ -72,11 +74,12 @@
     </style>
 </head>
 <body>
-    <h1>Phone Experience 2024</h1>
-    <video controls>
-        <source src="audio.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video><br />
+    <h1 class="page-title">Phone Experience 2024</h1>
+
+    <audio controls>
+        <source src="audio.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio> <br />
     <div id="calendar">
         <div id="calendar-header">
             <span id="month-prev" class="change-month">&lt;</span>
@@ -119,17 +122,17 @@
 
             for (let x = firstDayIndex; x > 0; x--) {
                 let fullDate = formatDate(new Date(date.getFullYear(), date.getMonth(), -x + 1));
-                dates += `<div class='prev-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: green;" : ""}'>${prevLastDay - x + 1}</div>`;
+                dates += `<div class='prev-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: #c5e0b4;" : ""}'>${prevLastDay - x + 1}</div>`;
             }
             
             for (let i = 1; i <= lastDay; i++) {
                 let fullDate = formatDate(new Date(date.getFullYear(), date.getMonth(), i));
-                dates += `<div data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: green;" : ""}'>${i}</div>`;
+                dates += `<div data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: #c5e0b4;" : ""}'>${i}</div>`;
             }
             
             for (let j = 1; j <= nextDays; j++) {
                 let fullDate = formatDate(new Date(date.getFullYear(), date.getMonth() + 1, j));
-                dates += `<div class='next-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: green;" : ""}'>${j}</div>`;
+                dates += `<div class='next-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: #c5e0b4;" : ""}'>${j}</div>`;
             }
             
             monthDays.innerHTML = dates;
@@ -143,7 +146,7 @@
                         this.style.color = 'black';
                     } else {
                         selectedDates.push(selectedDate);
-                        this.style.backgroundColor = 'green'; // Select
+                        this.style.backgroundColor = '#c5e0b4'; // Select
                         this.style.color = 'white';
                     }
                 });
