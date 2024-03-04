@@ -37,6 +37,8 @@
             background-color: #333;
             transition: opacity 0.5s ease;
             opacity: 1;
+            font-size: large;
+            font-weight: bold;
         }
 
         #calendar-body.fade-out {
@@ -53,7 +55,7 @@
             cursor: pointer;
             height: 100px;
             width: 100px;
-            background-color: red;
+            background-color: gray;
             font-size: 100px;
         }
     </style>
@@ -63,171 +65,84 @@
         <div id="calendar-header">
             <span id="month-prev" class="change-month">&lt;</span>
             <h1 id="month"></h1>
-            <span id="month-next" class="change-month">&gt;</span>
+            <span id="month-next" class="change-month" style="float: right;">&gt;</span>
         </div>
         <div id="calendar-body"></div>
     </div>
 
     <script>
-        let date = new Date();
+ let date = new Date();
         let selectedDates = [];
+
+        function formatDate(date) {
+            let d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) 
+                month = '0' + month;
+            if (day.length < 2) 
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
         
         function renderCalendar() {
             date.setDate(1);
-        
             const monthDays = document.getElementById('calendar-body');
             const month = document.getElementById('month');
-
-
-            function generateRandomCode() {
-                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let result = '';
-                for (let i = 0; i < 8; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-                }
-                return result;
-            }
-        
-            const lastDay = new Date(
-                date.getFullYear(),
-                date.getMonth() + 1,
-                0
-            ).getDate();
-        
-            const prevLastDay = new Date(
-                date.getFullYear(),
-                date.getMonth(),
-                0
-            ).getDate();
-        
+            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+            const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
             const firstDayIndex = date.getDay();
-        
-            const lastDayIndex = new Date(
-                date.getFullYear(),
-                date.getMonth() + 1,
-                0
-            ).getDay();
-
-            function arraysEqual(a, b) {
-                if (a.length !== b.length) return false;
-                for (let i = 0; i < a.length; i++) {
-                    if (a[i] !== b[i]) return false;
-                }
-                return true;
-            }
-                
+            const lastDayIndex = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDay();
             const nextDays = 7 - lastDayIndex - 1;
-        
-            const months = [
-                'January',
-                'February',
-                'March',
-                'April',
-                'May',
-                'June',
-                'July',
-                'August',
-                'September',
-                'October',
-                'November',
-                'December'
-            ];
-        
-            const days = [
-                'S',
-                'M',
-                'T',
-                'W',
-                'T',
-                'F',
-                'S'
-            ];
-
-            const check = [
-                '2024-5-24',
-                '2024-5-25',
-                '2024-5-21',
-                '2024-5-22',
-                '2024-4-12',
-                '2024-4-13',
-                '2024-4-3',
-                '2024-5-18',
-                '2024-6-7',
-                '2024-5-30',
-                '2024-5-10',
-                '2024-5-11',
-                '2024-4-10',
-            ];
-        
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            
             month.innerText = `${months[date.getMonth()]} ${date.getFullYear()}`;
-        
             let dates = '';
-        
+
             for (let x = firstDayIndex; x > 0; x--) {
-                let prevDate = new Date(date.getFullYear(), date.getMonth(), -x + 1);
-                let fullDate = `${prevDate.getFullYear()}-${prevDate.getMonth() + 1}-${prevDate.getDate()}`;
-                dates += `<div class='prev-date' data-date='${fullDate}'>${prevLastDay - x + 1}</div>`;
+                let fullDate = formatDate(new Date(date.getFullYear(), date.getMonth(), -x + 1));
+                dates += `<div class='prev-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: green;" : ""}'>${prevLastDay - x + 1}</div>`;
             }
-        
+            
             for (let i = 1; i <= lastDay; i++) {
-                let fullDate = `${date.getFullYear()}-${date.getMonth() + 1}-${i}`;
-                if (
-                    i === new Date().getDate() &&
-                    date.getMonth() === new Date().getMonth() &&
-                    date.getFullYear() === new Date().getFullYear()
-                ) {
-                    dates += `<div class='today' data-date='${fullDate}'>${i}</div>`;
-                } else {
-                    dates += `<div data-date='${fullDate}'>${i}</div>`;
-                }
+                let fullDate = formatDate(new Date(date.getFullYear(), date.getMonth(), i));
+                dates += `<div data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: green;" : ""}'>${i}</div>`;
             }
-        
+            
             for (let j = 1; j <= nextDays; j++) {
-                let nextDate = new Date(date.getFullYear(), date.getMonth() + 1, j);
-                let fullDate = `${nextDate.getFullYear()}-${nextDate.getMonth() + 1}-${nextDate.getDate()}`;
-                dates += `<div class='next-date' data-date='${fullDate}'>${j}</div>`;
+                let fullDate = formatDate(new Date(date.getFullYear(), date.getMonth() + 1, j));
+                dates += `<div class='next-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: green;" : ""}'>${j}</div>`;
             }
-        
+            
             monthDays.innerHTML = dates;
-        
+
             document.querySelectorAll('#calendar-body > div').forEach(day => {
                 day.addEventListener('click', function() {
                     let selectedDate = this.getAttribute('data-date');
                     if (selectedDates.includes(selectedDate)) {
                         selectedDates = selectedDates.filter(date => date !== selectedDate);
                         this.style.backgroundColor = ''; // Deselect
+                        this.style.color = 'black';
                     } else {
                         selectedDates.push(selectedDate);
                         this.style.backgroundColor = 'green'; // Select
-                        console.log(selectedDates);
-                    }
-
-                    console.log(selectedDates, check);
-                    if (arraysEqual(selectedDates, check)) {
-                        document.getElementById('calendar').textContent = 'A56B8DX9';
-                    } else if (selectedDates.length == check.length){
-                        document.getElementById('calendar').textContent = generateRandomCode();
+                        this.style.color = 'white';
                     }
                 });
             });
         }
-        
+
         document.getElementById('month-prev').addEventListener('click', () => {
-            document.getElementById('calendar-body').classList.add('fade-out');
-            setTimeout(() => {
-                date.setMonth(date.getMonth() - 1);
-                renderCalendar();
-                document.getElementById('calendar-body').classList.remove('fade-out');
-            }, 500);
+            date.setMonth(date.getMonth() - 1);
+            renderCalendar();
         });
-        
+
         document.getElementById('month-next').addEventListener('click', () => {
-            document.getElementById('calendar-body').classList.add('fade-out');
-            setTimeout(() => {
-                date.setMonth(date.getMonth() + 1);
-                renderCalendar();
-                document.getElementById('calendar-body').classList.remove('fade-out');
-            }, 500);
+            date.setMonth(date.getMonth() + 1);
+            renderCalendar();
         });
         
         renderCalendar();
