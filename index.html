@@ -80,7 +80,7 @@
     </style>
 </head>
 <body>
-    <h1 class="page-title">Phone Experience 2024</h1>
+    <h1 class="page-title">Over de hele Linie genomen zijn ze best grappig</h1>
 
     <audio controls>
         <source src="audio.mp3" type="audio/mp3">
@@ -97,6 +97,7 @@
     <script>
         let date = new Date();
         let selectedDates = [];
+        let correctCombination = ["2024-05-24", "2024-05-25", "2024-05-21", "2024-05-22", "2024-04-12", "2024-04-13", "2024-04-03", "2024-05-18", "2024-06-07", "2024-05-30", "2024-05-10", "2024-05-11", "2024-04-10"];
 
         function formatDate(date) {
             let d = new Date(date),
@@ -128,17 +129,17 @@
 
             for (let x = firstDayIndex; x > 0; x--) {
                 let fullDate = formatDate(new Date(date.getFullYear(), date.getMonth(), -x + 1));
-                dates += `<div class='prev-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: #c5e0b4;" : ""}'>${prevLastDay - x + 1}</div>`;
+                dates += `<div class='prev-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: #c5e0b4;color: white;" : ""}'>${prevLastDay - x + 1}</div>`;
             }
             
             for (let i = 1; i <= lastDay; i++) {
                 let fullDate = formatDate(new Date(date.getFullYear(), date.getMonth(), i));
-                dates += `<div data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: #c5e0b4;" : ""}'>${i}</div>`;
+                dates += `<div data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: #c5e0b4;color:white;" : ""}'>${i}</div>`;
             }
             
             for (let j = 1; j <= nextDays; j++) {
                 let fullDate = formatDate(new Date(date.getFullYear(), date.getMonth() + 1, j));
-                dates += `<div class='next-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: #c5e0b4;" : ""}'>${j}</div>`;
+                dates += `<div class='next-date' data-date='${fullDate}' style='${selectedDates.includes(fullDate) ? "background-color: #c5e0b4;color:white;" : ""}'>${j}</div>`;
             }
             
             monthDays.innerHTML = dates;
@@ -154,9 +155,31 @@
                         selectedDates.push(selectedDate);
                         this.style.backgroundColor = '#c5e0b4'; // Select
                         this.style.color = 'white';
+                        checkCombination();
                     }
                 });
             });
+        }
+
+        function generateRandomCode() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for ( let i = 0; i < 8; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        function checkCombination() {
+            if(selectedDates.length === correctCombination.length && correctCombination.every(date => selectedDates.includes(date))) {
+                alert("Code: A56B8DX9");
+                selectedDates = [];
+                location.reload();
+            } else if (selectedDates.length === 13) {
+                alert("Code: " + generateRandomCode());
+                selectedDates = [];
+                location.reload();
+            }
         }
 
         document.getElementById('month-prev').addEventListener('click', () => {
