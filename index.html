@@ -159,10 +159,20 @@
                         selectedDates.push(selectedDate);
                         this.style.backgroundColor = '#c5e0b4'; // Select
                         this.style.color = 'white';
-                        checkCombination();
                     }
+                    checkCombination();
                 });
             });
+        }
+
+        function arraysEqual(a, b) {
+            if (a.length !== b.length) return false;
+
+            for (let i = 0; i < a.length; i++) {
+                if (a[i] !== b[i]) return false;
+            }
+
+            return true;
         }
 
         function generateRandomCode() {
@@ -175,7 +185,7 @@
         }
 
         function checkCombination() {
-            if(selectedDates.length === correctCombination.length && correctCombination.every(date => selectedDates.includes(date))) {
+            if(selectedDates.length === correctCombination.length && arraysEqual(selectedDates, correctCombination)) {
                 alert("Code: A56B8DX9");
                 selectedDates = [];
                 location.reload();
