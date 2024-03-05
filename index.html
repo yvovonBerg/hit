@@ -77,6 +77,10 @@
             justify-content: center; /* Center horizontally */
             align-items: center; /* Center vertically */
         }
+
+        .prev-date {
+    background-color: #d0e0c3; /* Slightly changed background color for a prev date */
+}
     </style>
 </head>
 <body>
@@ -122,7 +126,7 @@
             const firstDayIndex = date.getDay();
             const lastDayIndex = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDay();
             const nextDays = 7 - lastDayIndex - 1;
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
             
             month.innerText = `${months[date.getMonth()]} ${date.getFullYear()}`;
             let dates = '';
